@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import serverConfig from './api/src/config/server.js'; 
 import testeRoute from './api/src/routes/testeroute.js';
 
 
@@ -10,7 +11,6 @@ app.use(express.json());
 
 app.use('/users', testeRoute);
 
-app.listen({
-    host: '0.0.0.0',
-    port: process.env.PORT ?? 3333,
+app.listen(serverConfig.port, serverConfig.host, () => {
+    console.log(`Servidor rodando em http://${serverConfig.host}:${serverConfig.port} no dia ${serverConfig.dateTime}`);
 });

@@ -8,17 +8,20 @@ export class testeModel{
             const newId = randomUUID();
             await sql`INSERT INTO users (id, username, password) VALUES (${newId}, ${data.username}, ${data.password})`;
             console.log('Create Model');
-            return { success: true, message: 'Usuário criado com sucesso!', data: { id: newId, name: data.username, email: data.email } };
+            return { success: true, message: 'Usuário criado com sucesso!', data: { id: newId, name: data.username, password: data.password } };
         } catch (error) {
-            throw new Error(error.message);
+            return { success: false, message: error.message };
         }
     }
 
     async listUser(){
-        const users = await sql`SELECT * FROM users`;
-
-        console.log('List Model')
-        return users
+        try{
+            const users = await sql`SELECT * FROM users`;
+            console.log('List Model')
+            return users
+        } catch (error) {
+            return { success: false, message: error.message }
+        }
     }
 
 

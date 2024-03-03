@@ -77,8 +77,7 @@ export async function authUser(req, res){
         if (user.success) {
             try {
                 const token = jwt.sign({ id: user.data.id, leveluser: user.data.leveluser, username: user.data.username }, process.env.JWT_SECRET, {expiresIn: '1h'})
-                console.log(token)
-                res.status(200).json({message: 'Usuário autenticado!', leveluser: user.leveluser, token: token})
+                res.status(200).json({message: 'Usuário autenticado!', leveluser: user.data.leveluser, token: token})
             } catch (error) {
                 res.status(500).json({message: error.message})
             }

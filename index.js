@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import serverConfig from './api/src/config/server.js'; 
 import videoRoute from './api/src/routes/videos/routeVideos.js';
 import userroute from './api/src/routes/usuarios/userroute.js';
+import authtoken from './api/src/routes/auth/authToken.js';
 import cors from 'cors';
 
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+app.use('/auth', authtoken);
 app.use('/videos', videoRoute);
 app.use('/usuarios', userroute);
 

@@ -1,6 +1,7 @@
 import { sql } from '../../config/database.js';
 import { randomUUID } from 'crypto';
 
+
 export class userModels{
 
     async createUser(data) {
@@ -28,7 +29,9 @@ export class userModels{
     async checkUserExist(id){
         try{
             const user = await sql`SELECT * FROM usuariosregistrados WHERE username = ${id}`;
+            console.log(user)
             if (user.length > 0) {
+                
                 return { success: false, message: 'Usuário encontrado!' }
             } else {
                 return { success: true, message: 'Usuário não encontrado!' }
@@ -43,13 +46,25 @@ export class userModels{
         try{
             
             const user = await sql`SELECT email FROM usuariosregistrados WHERE email = ${email}`;
-            console.log(email)
             if (user.length > 0) {
                 return { success: false, message: 'Email já cadastrado!' }
             } else {
                 return { success: true, message: 'Email disponível!' }
             }
             return user
+        } catch (error) {
+            return { success: false, message: error.message }
+        }
+    }
+
+    async authUser(data){
+        try {
+            const user = await sql`SELECT * FROM usuariosregistrados WHERE username = ${data.username} AND password = ${data.password}`;
+            if (user.length > 0) {
+                return { success: true, data: { leveluser: user[0].leveluser, username: user[0].username, id: user[0].id }}
+            } else {
+                return { success: false }
+            }
         } catch (error) {
             return { success: false, message: error.message }
         }

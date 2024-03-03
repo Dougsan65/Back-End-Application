@@ -1,5 +1,6 @@
 import { userModels } from '../../models/usuarios/userModels.js';
 import {z} from 'zod';
+import jwt from 'jsonwebtoken';
 const reqDB = new userModels()
 export async function listUser(req, res){
     try {
@@ -28,6 +29,13 @@ export async function checkUserExist(req, res){
 
 export async function checkEmailExist(req, res){
     try {
+        const reqData = {
+            id: req.userData.id,
+            leveluser: req.userData.leveluser,
+            username: req.userData.username
+        }
+        console.log(reqData)
+
         const email = req.params.email;
         const user = await reqDB.checkEmailExist(email);
         if (user.success) {
@@ -53,6 +61,30 @@ export async function createUser(req, res){
         const newUser = await reqDB.createUser(data)
         res.status(201).json(newUser)
 
+    } catch (error) {
+        res.status(400).json({message: error.errors})
+    }
+}
+
+export async function authUser(req, res){
+    try {
+        const schema = z.object({
+            username: z.string(),
+            password: z.string()
+        })
+        const data = schema.parse(req.body)
+        const user = await reqDB.authUser(data)
+        if (user.success) {
+            try {
+                const token = jwt.sign({ id: user.data.id, leveluser: user.data.leveluser, username: user.data.username }, process.env.JWT_SECRET, {expiresIn: '1h'})
+                console.log(token)
+                res.status(200).json({message: 'Usuário autenticado!', leveluser: user.leveluser, token: token})
+            } catch (error) {
+                res.status(500).json({message: error.message})
+            }
+        } else {
+            res.status(401).json({message: 'Usuário não autenticado!'})
+        }
     } catch (error) {
         res.status(400).json({message: error.errors})
     }

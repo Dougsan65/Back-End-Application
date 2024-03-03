@@ -14,7 +14,6 @@ export class modelVideos{
     }
 
     async listVideo(params){
-        console.log(params)
         try{
             if (params === undefined) {
                 const videos = await sql`SELECT * FROM videos`;
@@ -49,14 +48,15 @@ export class modelVideos{
     }
 
     async editVideo(data, id){
-        console.log('teste'+data, id)
         if (id === undefined) {
             return { success: false, message: 'Id não informado!' }
         }
         try{
-            console.log(data.title, data.description, data.duration, data.zone, id.id)
-            await sql`UPDATE videos SET title = ${data.title}, description = ${data.description}, duration = ${data.duration}, zone = ${data.zone} WHERE id = ${id.id}`;
+            const response = await sql`UPDATE videos SET title = ${data.title}, description = ${data.description}, duration = ${data.duration}, zone = ${data.zone} WHERE id = ${id.id}`;
             console.log('Edit Model')
+            if (response.count === 0) {
+                return { success: false, message: 'Vídeo não encontrado!' }
+            }
             return { success: true, message: 'Vídeo editado com sucesso!' }
         } catch (error) {
             return { success: false, message: error.message }

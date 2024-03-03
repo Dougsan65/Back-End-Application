@@ -25,20 +25,30 @@ export class userModels{
         }
     }
 
-    async listUserbyId(id){
+    async checkUserExist(id){
         try{
-            const user = await sql`SELECT * FROM usuariosregistrados WHERE id = ${id}`;
-            console.log('List Model')
-            console.log(user)
-            return user
+            const user = await sql`SELECT * FROM usuariosregistrados WHERE username = ${id}`;
+            if (user.length > 0) {
+                return { success: false, message: 'Usuário encontrado!' }
+            } else {
+                return { success: true, message: 'Usuário não encontrado!' }
+            }
         } catch (error) {
             return { success: false, message: error.message }
         }
     }
 
     async checkEmailExist(email){
+
         try{
-            const user = await sql`SELECT email FROM usuariosregistrados WHERE email = ${email.email}`;
+            
+            const user = await sql`SELECT email FROM usuariosregistrados WHERE email = ${email}`;
+            console.log(email)
+            if (user.length > 0) {
+                return { success: false, message: 'Email já cadastrado!' }
+            } else {
+                return { success: true, message: 'Email disponível!' }
+            }
             return user
         } catch (error) {
             return { success: false, message: error.message }

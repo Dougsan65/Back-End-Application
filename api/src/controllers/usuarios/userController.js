@@ -11,27 +11,33 @@ export async function listUser(req, res){
     }
 }
 
-export async function listUserbyId(req, res){
+export async function checkUserExist(req, res){
     try {
-        const id = req.params.id
-        const user = await reqDB.listUserbyId(id)
-        res.status(200).json(user)
+        const username = req.params.id;
+        const user = await reqDB.checkUserExist(username);
+        if (user.success) {
+            res.status(200).json({ exists: false });
+        } else {
+            res.status(409).json({ exists: true });
+        }
     } catch (error) {
-        console.log(error)
-        res.status(500).json({message: error.message})
+        console.log(error);
+        res.status(500).json({ message: error.message });
     }
 }
 
-
 export async function checkEmailExist(req, res){
     try {
-        const email = req.params
-
-        const user = await reqDB.checkEmailExist(email)
-        res.status(200).json(user)
+        const email = req.params.email;
+        const user = await reqDB.checkEmailExist(email);
+        if (user.success) {
+            res.status(200).json({ exists: false });
+        } else {
+            res.status(409).json({ exists: true });
+        }
     } catch (error) {
-        console.log(error)
-        res.status(500).json({message: error.message})
+        console.log(error);
+        res.status(500).json({ message: error.message });
     }
 }
 

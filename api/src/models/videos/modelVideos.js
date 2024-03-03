@@ -9,26 +9,32 @@ export class modelVideos{
             console.log('Create Model')
             return { success: true, message: 'Vídeo criado com sucesso!' }
         } catch (error) {
+            console.log(error)
             return { success: false, message: error.message }
         }
     }
 
-    async listVideo(params){
-        try{
-            if (params === undefined) {
-                const videos = await sql`SELECT * FROM videos`;
-                console.log('List all Model')
-                return videos
-            }else{
-                const videos = await sql`SELECT * FROM videos WHERE id = ${params}`;
-                console.log('List with where Model')
-                return videos
+    async listVideo(id){
+        try {
+            let response;
+            if (id === undefined || id === null) {
+                response = await sql`SELECT * FROM videos`;
+                console.log('List Model');
+                return { success: true, message: 'Vídeos encontrados com sucesso!', data: response };
+            } else {
+                response = await sql`SELECT * FROM videos WHERE id = ${id}`;
+                console.log('List Model');
+                if (response.length === 0) {
+                    return { success: false, message: 'Vídeo não encontrado!' };
+                }
+                return { success: true, message: 'Vídeo encontrado com sucesso!', data: response };
             }
-
         } catch (error) {
-            return { success: false, message: error.message }
+            console.error(error);
+            return { success: false, message: error.message };
         }
     }
+    
 
     async deleteVideo(data){
         if (data.id === undefined) {

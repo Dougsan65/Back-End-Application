@@ -24,6 +24,7 @@ export async function createVideo(req, res){
         });
 
         const data = req.body;
+        
 
         try {
             // Validar os dados usando o esquema Zod
@@ -36,6 +37,7 @@ export async function createVideo(req, res){
             res.status(400).json({ message: 'Dados inválidos!', error: validationError.errors });
         }
     } catch (error) {
+        console.log('ai nao');
         console.log(error);
         res.status(500).json({ message: error.message });
     }

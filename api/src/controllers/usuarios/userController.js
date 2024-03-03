@@ -29,13 +29,6 @@ export async function checkUserExist(req, res){
 
 export async function checkEmailExist(req, res){
     try {
-        const reqData = {
-            id: req.userData.id,
-            leveluser: req.userData.leveluser,
-            username: req.userData.username
-        }
-        console.log(reqData)
-
         const email = req.params.email;
         const user = await reqDB.checkEmailExist(email);
         if (user.success) {

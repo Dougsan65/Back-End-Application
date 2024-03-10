@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model personagens {
+  id_usuario          String
+  nomepersonagem      String              @db.VarChar(100)
+  xp                  Int?
+  nivel               Int?
+  datacriacao         DateTime?           @db.Date
+  usuariosregistrados usuariosregistrados @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_usuario, nomepersonagem])
+}
+
+model users {
+  id       String @id
+  username String @db.VarChar(50)
+  password String @db.VarChar(50)
+}
+
+model usuariosregistrados {
+  id          String        @id
+  username    String?       @unique(map: "unique_nomeusuario") @db.VarChar(100)
+  email       String?       @unique(map: "unique_email") @db.VarChar(100)
+  password    String?       @db.VarChar(100)
+  datecreated DateTime?     @db.Date
+  leveluser   Int?
+  personagens personagens[]
+}
+
+model videos {
+  id          String @id
+  title       String @db.VarChar(100)
+  description String @db.VarChar(255)
+  duration    Int
+  zone        String @db.VarChar(100)
+}

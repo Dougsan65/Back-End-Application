@@ -1,11 +1,21 @@
-import { sql } from '../../config/database.js';
-import { randomUUID } from 'crypto';
+import { PrismaClient } from '@prisma/client';
 
+import { randomUUID } from 'crypto';
+const prisma = new PrismaClient();
 export class modelVideos{
+    
     async createVideo(data) {
         try {
             const id = randomUUID();
-            await sql`INSERT INTO videos (id, title, description, duration, zone) VALUES (${id}, ${data.title}, ${data.description}, ${data.duration}, ${data.zone})`;
+            await prisma.videos.create({
+                data: {
+                    id: id,
+                    title: data.title,
+                    description: data.description,
+                    duration: data.duration,
+                    zone: data.zone,
+                }
+            });
             console.log('Create Model')
             return { success: true, message: 'Vídeo criado com sucesso!' }
         } catch (error) {
@@ -18,11 +28,13 @@ export class modelVideos{
         try {
             let response;
             if (id === undefined || id === null) {
-                response = await sql`SELECT * FROM videos`;
-                console.log('List Model');
+                response = await prisma.videos.findMany();
+                console.log(response);
                 return { success: true, message: 'Vídeos encontrados com sucesso!', data: response };
             } else {
-                response = await sql`SELECT * FROM videos WHERE id = ${id}`;
+                response = await prisma.videos.findMany({
+                    where: { id: id }
+                });
                 console.log('List Model');
                 if (response.length === 0) {
                     return { success: false, message: 'Vídeo não encontrado!' };
@@ -41,7 +53,9 @@ export class modelVideos{
             return { success: false, message: 'Id não informado!' }
         }
         try{
-            const a = await sql`DELETE FROM videos WHERE id = ${data.id}`;
+            const a = await prisma.videos.delete({
+                where: { id: data.id }
+            });
             if (a.count === 0) {
                 return { success: false, message: 'Vídeo não encontrado!' }
             }
@@ -58,7 +72,15 @@ export class modelVideos{
             return { success: false, message: 'Id não informado!' }
         }
         try{
-            const response = await sql`UPDATE videos SET title = ${data.title}, description = ${data.description}, duration = ${data.duration}, zone = ${data.zone} WHERE id = ${id.id}`;
+            const response = await prisma.videos.update({
+                where: { id: id },
+                data: {
+                    title: data.title,
+                    description: data.description,
+                    duration: data.duration,
+                    zone: data.zone
+                }
+            });
             console.log('Edit Model')
             if (response.count === 0) {
                 return { success: false, message: 'Vídeo não encontrado!' }

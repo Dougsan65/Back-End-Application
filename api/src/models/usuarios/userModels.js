@@ -1,6 +1,8 @@
-import { sql } from '../../config/database.js';
+import { PrismaClient } from '@prisma/client';
+
 import { randomUUID } from 'crypto';
 
+const prisma = new PrismaClient();
 
 export class userModels{
 
@@ -8,7 +10,15 @@ export class userModels{
         try {
             const newId = randomUUID();
             const curretDate = new Date();
-            await sql`INSERT INTO usuariosregistrados (id, username, email, password, datecreated, leveluser) VALUES (${newId}, ${data.username}, ${data.email},  ${data.password}, ${curretDate}, 1)`;
+            await prisma.usuariosregistrados.create({
+                data: { curretDate,
+                    id: newId,
+                    username: data.username,
+                    email: data.email,
+                    password: data.password,
+                    leveluser: 1,
+                }
+            });
             console.log('Create Model');
             return { success: true, message: 'Usuário criado com sucesso!', data: { id: newId, name: data.username, password: data.password } };
         } catch (error) {
@@ -18,7 +28,7 @@ export class userModels{
 
     async listUser(){
         try{
-            const users = await sql`SELECT * FROM usuariosregistrados`;
+            const users = await prisma.usuariosregistrados.findMany();
             console.log('List Model')
             return users
         } catch (error) {
@@ -28,7 +38,9 @@ export class userModels{
 
     async checkUserExist(id){
         try{
-            const user = await sql`SELECT * FROM usuariosregistrados WHERE username = ${id}`;
+            const user = await prisma.usuariosregistrados.findMany({
+                where: { username: id }
+            });
             console.log(user)
             if (user.length > 0) {
                 
@@ -45,13 +57,14 @@ export class userModels{
 
         try{
             
-            const user = await sql`SELECT email FROM usuariosregistrados WHERE email = ${email}`;
+            const user = await prisma.usuariosregistrados.findMany({
+                where: { email: email }
+            });
             if (user.length > 0) {
                 return { success: false, message: 'Email já cadastrado!' }
             } else {
                 return { success: true, message: 'Email disponível!' }
             }
-            return user
         } catch (error) {
             return { success: false, message: error.message }
         }
@@ -59,7 +72,9 @@ export class userModels{
 
     async authUser(data){
         try {
-            const user = await sql`SELECT * FROM usuariosregistrados WHERE username = ${data.username} AND password = ${data.password}`;
+            const user = await prisma.usuariosregistrados.findMany({
+                where: { username: data.username, password: data.password }
+            });
             if (user.length > 0) {
                 return { success: true, data: { leveluser: user[0].leveluser, username: user[0].username, id: user[0].id }}
             } else {

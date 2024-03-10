@@ -1,7 +1,6 @@
-import 'dotenv/config'
-import postgres from "postgres";
+import { PrismaClient } from '@prisma/client';
 
-const { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, PGPORT} = process.env;
-const url = `postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`;
+// Cria uma instância do PrismaClient
+const prisma = new PrismaClient();
 
-export const sql = postgres(url, {ssl: 'require'});
+export default prisma;

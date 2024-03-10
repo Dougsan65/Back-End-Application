@@ -71,6 +71,8 @@ export class modelVideos{
         if (id === undefined) {
             return { success: false, message: 'Id não informado!' }
         }
+
+        
         try{
             const response = await prisma.videos.update({
                 where: { id: id },

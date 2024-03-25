@@ -64,6 +64,7 @@ export async function authUser(req, res){
         const schema = z.object({
             username: z.string(),
             password: z.string()
+            
         })
         const data = schema.parse(req.body)
         const user = await reqDB.authUser(data)

@@ -1,12 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import serverConfig from './api/src/config/server.js'; 
+import serverConfig from './api/src/config/server.js';
 import videoRoute from './api/src/routes/videos/routeVideos.js';
 import userroute from './api/src/routes/usuarios/userroute.js';
 import authtoken from './api/src/routes/auth/authToken.js';
 import cors from 'cors';
-
-
 
 dotenv.config();
 const app = express();
@@ -17,6 +15,9 @@ app.use('/auth', authtoken);
 app.use('/videos', videoRoute);
 app.use('/usuarios', userroute);
 
+
 app.listen(serverConfig.port, serverConfig.host, () => {
-    console.log(`Servidor rodando em http://${serverConfig.host}:${serverConfig.port} no dia ${serverConfig.dateTime}`);
+    console.log(
+        `Servidor rodando em http://${serverConfig.host}:${serverConfig.port} no dia ${serverConfig.dateTime}`
+    );
 });

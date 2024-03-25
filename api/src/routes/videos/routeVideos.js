@@ -1,5 +1,10 @@
 import express from 'express';
-import {createVideo, listVideo, deleteVideo, editVideo} from '../../controllers/videos/controllerVideos.js'
+import {
+    createVideo,
+    listVideo,
+    deleteVideo,
+    editVideo,
+} from '../../controllers/videos/controllerVideos.js';
 const router = express.Router();
 
 router.get('/listar/:id?', listVideo);
